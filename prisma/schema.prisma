@@ -13,14 +13,16 @@ datasource db {
 }
 
 model Account {
-  id           String    @id @default(cuid())
-  email        String    @unique
-  passwordHash String
-  passwordSalt String
-  displayName  String
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  sessions     Session[]
+  id               String        @id @default(cuid())
+  email            String        @unique
+  passwordHash     String
+  passwordSalt     String
+  displayName      String
+  createdAt        DateTime      @default(now())
+  updatedAt        DateTime      @updatedAt
+  sessions         Session[]
+  groupsCreated    Group[]
+  groupMemberships GroupMember[]
 }
 
 model Session {
@@ -29,4 +31,35 @@ model Session {
   accountId String
   account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+// createdById names an Account rather than a GroupMember so that it can go on
+// naming the person who created the group after they have left it. The group
+// is then left with nobody able to delete it, which is the agreed reading of
+// AC-13 and AC-16 together: everyone else is offered leaving, and the group
+// goes for good under AC-15 when the last member leaves.
+model Group {
+  id          String        @id @default(cuid())
+  name        String
+  createdById String
+  createdBy   Account       @relation(fields: [createdById], references: [id], onDelete: Cascade)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  members     GroupMember[]
+}
+
+model GroupMember {
+  id        String   @id @default(cuid())
+  groupId   String
+  accountId String
+  group     Group    @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  account   Account  @relation(fields: [accountId], references: [id], onDelete: Cascade)
+  joinedAt  DateTime @default(now())
+
+  // AC-6 is enforced here rather than only by the check in addMember, which a
+  // double-submitted form could slip past.
+  @@unique([groupId, accountId])
+  // The unique index above starts with groupId, so it cannot answer "which
+  // groups is this person in?" — the question every group list asks.
+  @@index([accountId])
 }
