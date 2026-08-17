@@ -1,0 +1,23 @@
+/speckit-plan Create the implementation plan for this Expenses feature.
+
+Inspect the existing codebase first and follow the architecture and conventions already used by Accounts and Groups/Members.
+
+Reuse the existing authentication, group membership, database, API, frontend and testing patterns.
+
+Design the simplest solution that satisfies the specification and leaves Balances as a separate future feature.
+
+/speckit-tasks
+Break the approved Expenses specification and plan into actionable implementation tasks.
+
+Follow dependencies and reuse the existing project structure.
+
+Include the necessary backend, database, frontend, validation, authorization and automated testing work.
+
+Do not include the Balances feature.
+
+/speckit-implement
+Implement the approved Expenses feature according to the specification, plan and tasks.
+
+Follow the existing project conventions, reuse Accounts and Groups/Members, and complete the relevant automated tests.
+
+Do not implement Balances or unrelated functionality.
